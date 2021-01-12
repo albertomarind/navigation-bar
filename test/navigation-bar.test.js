@@ -74,18 +74,10 @@ describe('NavigationBar', () => {
     );
     el.selectItem(
       null,
-      {
-        urlImg: img,
-        urlImgActive: imgActive,
-        label: 'Desc',
-        selected: false,
-      },
+      el.items[1],
       1
     );
-    console.log(el.items);
     let itemFound = el.items.find(item => item.selected);
-    console.log('item encontrado',itemFound);
-  
     expect(itemFound.selected).to.equal(true);
   });
 
