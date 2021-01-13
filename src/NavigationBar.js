@@ -5,8 +5,8 @@ export class NavigationBar extends LitElement {
     return {
       items: {
         type: Array,
-        attribute:true,
-        reflect:true
+        attribute: true,
+        reflect: true,
       },
     };
   }
@@ -47,7 +47,7 @@ export class NavigationBar extends LitElement {
         cursor: pointer;
       }
       .navigation-bar__item-img {
-        transform: scale(.8);
+        transform: scale(0.8);
         width: var(--item-img-width, 25px);
         height: var(--item-img-height, 25px);
         cursor: pointer;
@@ -69,13 +69,14 @@ export class NavigationBar extends LitElement {
     return html`
       <div class="navigation-bar">
         <div class="navigation-bar__wp-items">
+          ${this.items.length === 0 ? 'The menu has no items' : ''}
           ${this.items.map(
             (item, index) => html`
               ${item.selected
                 ? html`
                     <div
                       class="navigation-bar__item--active"
-                      @click="${e => this.selectItem(e, item, index)}"
+                      @click="${e => this._selectItem(e, item, index)}"
                     >
                       <img
                         class="navigation-bar__item-img"
@@ -89,7 +90,7 @@ export class NavigationBar extends LitElement {
                 : html`
                     <div
                       class="navigation-bar__item"
-                      @click="${e => this.selectItem(e, item, index)}"
+                      @click="${e => this._selectItem(e, item, index)}"
                     >
                       <img
                         class="navigation-bar__item-img"
@@ -103,19 +104,19 @@ export class NavigationBar extends LitElement {
       </div>
     `;
   }
-  selectItem(e, selectedItem, index) {
+  _selectItem(e, selectedItem, index) {
     if (!selectedItem.selected) {
-      this.unselectItem();
+      this._unselectItem();
       selectedItem.selected = true;
       this.requestUpdate();
     }
     this.dispatchEvent(
-      new CustomEvent('on-item-select', {
+      new CustomEvent('on-select-item', {
         detail: { ...selectedItem, index },
       })
     );
   }
-  unselectItem() {
+  _unselectItem() {
     let itemFound = this.items.find(item => item.selected);
     if (itemFound) {
       itemFound.selected = false;
