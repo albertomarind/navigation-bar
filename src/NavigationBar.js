@@ -5,6 +5,8 @@ export class NavigationBar extends LitElement {
     return {
       items: {
         type: Array,
+        attribute:true,
+        reflect:true
       },
     };
   }

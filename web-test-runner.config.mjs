@@ -1,7 +1,8 @@
 // import { playwrightLauncher } from '@web/test-runner-playwright';
-import image from '@rollup/plugin-image';
+import url from '@rollup/plugin-url';
 import { fromRollup } from '@web/dev-server-rollup';
-const imgRollup = fromRollup(image);
+
+const urlRollup = fromRollup(url);
 export default /** @type {import("@web/test-runner").TestRunnerConfig} */ ({
   files: 'test/**/*.test.js',
   nodeResolve: true,
@@ -29,7 +30,7 @@ export default /** @type {import("@web/test-runner").TestRunnerConfig} */ ({
   plugins: [
     /** Use Hot Module Replacement by uncommenting. Requires @open-wc/dev-server-hmr plugin */
     // hmr && hmrPlugin({ exclude: ['**/*/node_modules/**/*'], presets: [presets.litElement] }),
-    imgRollup()
+    urlRollup()
   ],
 
   // See documentation for all available options
