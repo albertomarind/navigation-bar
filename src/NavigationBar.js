@@ -101,7 +101,6 @@ export class NavigationBar extends LitElement {
       </div>
     `;
   }
-
   selectItem(e, selectedItem, index) {
     if (!selectedItem.selected) {
       this.unselectItem();
