@@ -31,7 +31,7 @@ describe('NavigationBar', () => {
     expect(el.items).to.equal(items);
   });
 
-  it('unselect item', async () => {
+  it('unselect item, change state true to false', async () => {
     let items = [
       {
         urlImg: img,
@@ -44,17 +44,23 @@ describe('NavigationBar', () => {
         urlImgActive: imgActive,
         label: 'Desc',
         selected: false,
-      }
+      },
+      {
+        urlImg: img,
+        urlImgActive: imgActive,
+        label: 'Desc',
+        selected: false,
+      },
     ];
     const el = await fixture(
       html`<navigation-bar .items="${items}"></navigation-bar>`
     );
     el.unselectItem();
-    let itemFound = items.find(item => item.selected);
-    expect(itemFound).to.equal(undefined);
+    let itemsSettedFalse = items.filter(item => !item.selected);
+    expect(itemsSettedFalse.length).to.equal(3);
   });
 
-  it('select item', async () => {
+  it('select item, change state false to true', async () => {
     let items = [
       {
         urlImg: img,
@@ -67,18 +73,35 @@ describe('NavigationBar', () => {
         urlImgActive: imgActive,
         label: 'Desc',
         selected: false,
-      }
+      },
     ];
     const el = await fixture(
       html`<navigation-bar .items="${items}"></navigation-bar>`
     );
-    el.selectItem(
-      null,
-      el.items[1],
-      1
+    el.selectItem(null, el.items[1], 1);
+    expect(el.items[1].selected).to.equal(true);
+  });
+
+  it('select item, dont change state when item is already selected', async () => {
+    let items = [
+      {
+        urlImg: img,
+        urlImgActive: imgActive,
+        label: 'Desc',
+        selected: true,
+      },
+      {
+        urlImg: img,
+        urlImgActive: imgActive,
+        label: 'Desc',
+        selected: false,
+      },
+    ];
+    const el = await fixture(
+      html`<navigation-bar .items="${items}"></navigation-bar>`
     );
-    let itemFound = el.items.find(item => item.selected);
-    expect(itemFound.selected).to.equal(true);
+    el.selectItem(null, el.items[0], 0);
+    expect(el.items[0].selected).to.equal(true);
   });
 
   // it('increases the counter on button click', async () => {
