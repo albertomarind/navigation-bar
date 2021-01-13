@@ -1,8 +1,12 @@
 {
   "name": "navigation-bar",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/albertomarind/navigation-bar.git"
+  },
   "description": "Webcomponent navigation-bar following open-wc recommendations",
-  "author": "navigation-bar",
+  "author": "albertomarind",
   "license": "MIT",
   "main": "index.js",
   "module": "index.js",
