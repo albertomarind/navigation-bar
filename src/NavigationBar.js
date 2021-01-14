@@ -4,13 +4,8 @@ export class NavigationBar extends LitElement {
   static get properties() {
     return {
       items: {
-        type: Array,
-        attribute: true,
-        reflect: true,
-      },
-      title: {
-        type: String,
-      },
+        type: Array 
+      }
     };
   }
 
@@ -111,12 +106,10 @@ export class NavigationBar extends LitElement {
   constructor() {
     super();
     this.items = [];
-    this.title = '';
   }
 
   render() {
     return html`
-    <h1>${this.title}</h1>
       <div class="navigation-bar">
         <div class="navigation-bar__wp-items">
           ${this.items.length === 0
