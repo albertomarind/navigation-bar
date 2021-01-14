@@ -80,6 +80,7 @@ export class NavigationBar extends LitElement {
         border-radius: var(--item-selected-border-radius);
         color: var(--item-selected-label-color);
         cursor: pointer;
+        padding-right: 0;
       }
 
       .navigation-bar__item-img--active,
@@ -89,7 +90,7 @@ export class NavigationBar extends LitElement {
         transform: scale(0.8);
         width: var(--item-img-width, 25px);
         height: var(--item-img-height, 25px);
-        cursor: pointer;
+      
       }
 
       .navigation-bar__item.active .navigation-bar__item-img--active,
