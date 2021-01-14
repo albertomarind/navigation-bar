@@ -17,7 +17,6 @@ export class NavigationBar extends LitElement {
         display: inline-block;
         font-family: sans-serif;
         --element-background-color: white;
-        --element-width: 100%;
         --item-selected-background-color: #213f7f;
         --item-selected-border-radius: 5rem;
         --item-selected-label-color: white;
@@ -37,11 +36,6 @@ export class NavigationBar extends LitElement {
         position: relative;
         display: inline-flex;
         flex-wrap: wrap;
-        width: var(--element-width);
-      }
-
-      input[type='radio'] {
-        display: none;
       }
 
       .navigation-bar__item,
@@ -90,7 +84,6 @@ export class NavigationBar extends LitElement {
         transform: scale(0.8);
         width: var(--item-img-width, 25px);
         height: var(--item-img-height, 25px);
-      
       }
 
       .navigation-bar__item.active .navigation-bar__item-img--active,
@@ -126,10 +119,8 @@ export class NavigationBar extends LitElement {
             : html`
                 ${this.items.map(
                   (item, index) => html`
-                    <input id="rad${index}" type="radio" name="group" />
-                    <label
+                    <div
                       id="navigation-bar__item${index}"
-                      for="rad${index}"
                       class="navigation-bar__item ${item.selected
                         ? 'active'
                         : ''}"
@@ -146,7 +137,7 @@ export class NavigationBar extends LitElement {
                       <span class="navigation-bar__item-label">
                         ${item.label}</span
                       >
-                    </label>
+                    </div>
                   `
                 )}
                 <div id="figureBackground" class="figure-background"></div>
