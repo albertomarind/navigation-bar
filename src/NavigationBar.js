@@ -14,48 +14,99 @@ export class NavigationBar extends LitElement {
   static get styles() {
     return css`
       :host {
-        display: block;
+        display: inline-block;
         font-family: sans-serif;
+        --element-background-color: white;
+        --element-width: 100%;
+        --item-selected-background-color: #213f7f;
+        --item-selected-border-radius: 5rem;
+        --item-selected-label-color: white;
+        --item-label-font-size: 0.65rem;
+        --item-width: 6rem;
+        --item-height: 1.7rem;
+      }
+      * {
+        box-sizing: border-box;
       }
       .navigation-bar {
         border-radius: 0.75rem;
-        overflow: hidden;
+        background-color: var(--element-background-color);
+        padding: 0.25rem 0.5rem;
       }
       .navigation-bar__wp-items {
-        display: flex;
-        justify-content: space-around;
-        background-color: var(--element-background-color, white);
-        padding: 0.5rem 0.25rem;
+        position: relative;
+        display: inline-flex;
+        flex-wrap: wrap;
+        width: var(--element-width);
+      }
+
+      input[type='radio'] {
+        display: none;
       }
 
       .navigation-bar__item,
-      .navigation-bar__item--active {
-        display: flex;
+      .navigation-bar__item.active,
+      .figure-background {
+        display: inline-flex;
+        position: relative;
+        width: var(--item-width);
+        height: var(--item-height);
+        justify-content: space-between;
         align-items: center;
+        z-index: 2;
+        padding: 0.25rem 2rem 0.25rem 0.25rem;
+        cursor: pointer;
       }
+      .navigation-bar__item:not(.active) {
+        padding: 0.25rem 0.25rem 0.25rem 0.25rem;
+      }
+
+      .figure-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        background-color: var(--item-selected-background-color);
+        border-radius: var(--item-selected-border-radius);
+        transition: 0.33s ease-in-out;
+      }
+
       .navigation-bar__item {
         justify-content: space-around;
         color: var(--item-label-color, black);
-        background-color: var(--item-background-color, white);
       }
-      .navigation-bar__item--active {
+      .navigation-bar__item.active {
         justify-content: flex-start;
-        border-radius: var(--item-selected-border-radius, 5rem);
-        color: var(--item-selected-label-color, white);
-        background-color: var(--item-selected-background-color, #213f7f);
-        padding: 0.125rem 2rem 0.125rem 0.5rem;
+        border-radius: var(--item-selected-border-radius);
+        color: var(--item-selected-label-color);
         cursor: pointer;
       }
+
+      .navigation-bar__item-img--active,
       .navigation-bar__item-img {
+        pointer-events: none;
+        display: none;
         transform: scale(0.8);
         width: var(--item-img-width, 25px);
         height: var(--item-img-height, 25px);
         cursor: pointer;
       }
+
+      .navigation-bar__item.active .navigation-bar__item-img--active,
+      .navigation-bar__item:not(.active) .navigation-bar__item-img {
+        display: inline-block;
+      }
+
       .navigation-bar__item-label {
-        font-size: var(--item-label-font-size, 0.75rem);
+        pointer-events: none;
+        display: none;
+      }
+
+      .navigation-bar__item.active .navigation-bar__item-label {
+        display: inline-block;
+        font-size: var(--item-label-font-size);
         font-weight: 700;
-        margin-left: 0.75rem;
+        margin-left: 0.125rem;
       }
     `;
   }
@@ -69,46 +120,53 @@ export class NavigationBar extends LitElement {
     return html`
       <div class="navigation-bar">
         <div class="navigation-bar__wp-items">
-          ${this.items.length === 0 ? 'The menu has no items' : ''}
-          ${this.items.map(
-            (item, index) => html`
-              ${item.selected
-                ? html`
-                    <div
-                      class="navigation-bar__item--active"
+          ${this.items.length === 0
+            ? 'The menu has no items'
+            : html`
+                ${this.items.map(
+                  (item, index) => html`
+                    <input id="rad${index}" type="radio" name="group" />
+                    <label
+                      id="navigation-bar__item${index}"
+                      for="rad${index}"
+                      class="navigation-bar__item ${item.selected
+                        ? 'active'
+                        : ''}"
                       @click="${e => this._selectItem(e, item, index)}"
                     >
                       <img
-                        class="navigation-bar__item-img"
+                        class="navigation-bar__item-img--active"
                         src="${item.urlImgActive}"
                       />
-                      <span class="navigation-bar__item-label">
-                        ${item.label}</span
-                      >
-                    </div>
-                  `
-                : html`
-                    <div
-                      class="navigation-bar__item"
-                      @click="${e => this._selectItem(e, item, index)}"
-                    >
                       <img
                         class="navigation-bar__item-img"
                         src="${item.urlImg}"
                       />
-                    </div>
-                  `}
-            `
-          )}
+                      <span class="navigation-bar__item-label">
+                        ${item.label}</span
+                      >
+                    </label>
+                  `
+                )}
+                <div id="figureBackground" class="figure-background"></div>
+              `}
         </div>
       </div>
     `;
   }
+
+  firstUpdated(changes) {
+    if (!changes.get('items')) {
+      this._setfirstPositionFigureBackground();
+    }
+  }
+
   _selectItem(e, selectedItem, index) {
+    this._moveFigureBackground(e.target);
     if (!selectedItem.selected) {
       this._unselectItem();
       selectedItem.selected = true;
-      this.requestUpdate();
+      this.items = [...this.items];
     }
     this.dispatchEvent(
       new CustomEvent('on-select-item', {
@@ -116,6 +174,24 @@ export class NavigationBar extends LitElement {
       })
     );
   }
+
+  _setfirstPositionFigureBackground() {
+    let indexSelectedItem = this.items.findIndex(item => item.selected);
+    if (indexSelectedItem >= 0) {
+      let navigationBarItem = this.shadowRoot.querySelector(
+        `#navigation-bar__item${indexSelectedItem}`
+      );
+      let figureBackground = this.shadowRoot.querySelector('#figureBackground');
+      figureBackground.style.top = navigationBarItem.offsetTop + 'px';
+      figureBackground.style.left = navigationBarItem.offsetLeft + 'px';
+    }
+  }
+  _moveFigureBackground({ offsetTop, offsetLeft }) {
+    let figureBackground = this.shadowRoot.querySelector('#figureBackground');
+    figureBackground.style.top = offsetTop + 'px';
+    figureBackground.style.left = offsetLeft + 'px';
+  }
+
   _unselectItem() {
     let itemFound = this.items.find(item => item.selected);
     if (itemFound) {
